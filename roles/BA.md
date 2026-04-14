@@ -178,6 +178,34 @@ If a designer wants every level to feel equally "gamey":
 
 ---
 
+### Principle 5 — Scaffolding is removed progressively within each level
+
+> "Every level starts fully assisted and ends fully unassisted. The child earns their independence round by round — they don't know the scaffold is being removed, they just notice they can do it."
+
+**The pattern within a single level:**
+
+| Round | Scaffold state | What changes |
+|-------|---------------|--------------|
+| Opening rounds | Fully assisted | All visual aids present — odometer, protractor, number line, labels, reference marks |
+| Middle rounds | Partially assisted | Some aids fade out or are hidden — e.g. odometer shown but reference marks gone |
+| Final rounds | Unassisted | All scaffolds removed — child works from memory and intuition built in earlier rounds |
+
+This is not the same as the challenge round — it is the normal progression of every level. The challenge round (Monster/Platinum) is the *named, announced* unassisted round. The scaffolding removal happens silently, round by round, without the child noticing.
+
+**Examples from existing games:**
+- Distance Calculator: odometer visible → odometer hidden (Monster Round)
+- Angle Explorer: drag-to-aim with live angle arc → arc fades → Platinum: type angle directly
+
+**For every new game, define:**
+1. What is the full scaffold at the start of a level? (every visual aid listed)
+2. What gets removed, and in what order, as the rounds progress?
+3. What does "fully unassisted" look like for this concept? (this becomes the challenge round)
+
+If a designer wants the scaffold to stay on throughout:
+> "The scaffold staying on means the child is always leaning on the aid — they never have to think for themselves. We want them to feel capable without it. Remove it gradually so they don't notice the transition."
+
+---
+
 ## Phase 1 — Interrogation (consultative style)
 
 The conversation has two distinct parts:
