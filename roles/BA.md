@@ -7,7 +7,7 @@
   - [Default UI](#default-ui-what-the-template-looks-like-out-of-the-box)
 - [Phase 1 — Interrogation](#phase-1--interrogation-consultative-style)
   - [Section 1 — Teaching objective](#section-1--teaching-objective)
-  - [Section 2 — How the game teaches it (the mechanic)](#section-2--how-the-game-teaches-it-the-mechanic)
+  - [Section 2 — The game concept (arcade mechanic → maths made physical)](#section-2--the-game-concept-arcade-mechanic--maths-made-physical)
   - [Section 3 — Levels: question types and progression](#section-3--levels-question-types-and-progression)
   - [Section 4 — Challenge round](#section-4--challenge-round)
   - [Section 5 — Question generation](#section-5--question-generation)
@@ -142,34 +142,64 @@ Capture:
 
 ---
 
-### Section 2 — How the game teaches it (the mechanic)
+### Section 2 — The game concept (arcade mechanic → maths made physical)
 
-Now derive the mechanic from the teaching objective. This is the creative heart of the design.
+This is the creative heart of the design. The goal is to find an **arcade game archetype** that children already instinctively understand, and map the maths concept directly onto it — so that playing the game *is* doing the maths, not just answering questions about it.
 
-> "Good. Now — how should a **game** teach this?
->
-> The best mechanics make the maths *visible and physical*: the child has to do the maths in order to make something happen on screen. Here are some patterns:
->
-> - **Measure and confirm**: child interacts with a visual (drags, aims, places) → game asks 'what's the value?' → child types it → correct answer makes something satisfying happen
-> - **Build and verify**: child constructs an answer by manipulating pieces (fraction bars, number line markers) → submits when they think it's right
-> - **Pure fluency drill**: no canvas interaction — child just types answers fast; good for recall practice once the concept is understood
->
-> Based on what you said about **[restate their teaching objective]**, I'd suggest: **[propose a specific mechanic — e.g. 'the child drags a point along a number line to place a fraction, then types the decimal equivalent to confirm' / 'the child drags a cannon to aim at an angle, making the angle physically visible before typing it' / 'pure keypad — the concept is already visual in the question text']**.
->
-> The reason I'd go with this: **[explain how the mechanic directly serves the learning gap they described]**.
->
-> Does this feel right? Or does a different mechanic come to mind?"
+The test of a good mechanic: **the child cannot win without understanding the maths concept**. If they can guess or brute-force without engaging the concept, the mechanic is wrong.
 
-Probe until the mechanic is unambiguous:
-- What physical action does the child perform?
-- What does that action *show* about the maths? (this is the pedagogical value)
-- Does the child interact with the canvas, the keypad, or both — and in what order?
-- What triggers the transition from interaction to answer submission?
-- Does it snap to values? (angle snap, grid snap, fraction snap)
+#### Your arcade archetype vocabulary
+
+Before proposing, reason through these archetypes and pick the one that makes the target concept most physically visible:
+
+| Archetype | Core action | Maths concepts it naturally teaches |
+|-----------|-------------|-------------------------------------|
+| **Artillery / Shooter** | Aim and fire at a target | Angles, trajectories, estimation |
+| **Explorer / Trail map** | Navigate from A to B across a map | Distance, decimals, addition of measurements |
+| **Platformer / Runner** | Character jumps or runs along a path | Number lines, integers, coordinates, sequences |
+| **Collector** | Gather items to fill a meter | Counting, addition, fractions of a whole |
+| **Builder / Stacker** | Place pieces to complete a shape | Fractions, area, geometry, symmetry |
+| **Racing** | Reach a target in the shortest path | Speed, time, distance, ratios |
+| **Shop / Market** | Buy and sell items, make change | Money, decimals, percentages |
+| **Puzzle / Escape room** | Solve to unlock the next door | Algebra, equations, logic |
+| **Tower defence** | Strategically place defenders | Multiplication, area, spatial reasoning |
+| **Rhythm / Music** | Hit notes in time | Fractions as beats, patterns, ratios |
+| **Treasure map** | Plot coordinates to find treasure | Coordinate grids, directions, scale |
+
+#### How to propose
+
+1. **Restate the learning gap** from Section 1 — what specifically the child struggles to grasp
+2. **Pick 2 archetypes** from the table that could work, and reason briefly about each
+3. **Recommend one** — the one where the maths is most physically unavoidable — and explain *why* in terms of the learning gap, not the technology
+
+Example reasoning (don't copy verbatim — adapt to the actual concept):
+
+> *"Angles — the misconception is that kids think 'bigger angle = longer arms'. The fix is to make the angle itself the thing they physically manipulate, not just label. An **artillery mechanic** does this perfectly: the child drags a cannon barrel and the angle arc is live on screen. They cannot aim at 45° without understanding what 45° looks like. That's the cannon → angles insight. A number-line mechanic wouldn't work here because angles aren't linear.*"
+
+Then say to the designer:
+
+> "For **[teaching objective]**, here's the arcade concept I'd go with:
+>
+> **[Game concept name]** — [one sentence: the arcade game + how the maths is embedded in the core action]. Think [familiar game reference, e.g. 'like Angry Birds but the angle is the answer, not just the aim'].
+>
+> The child [describe the physical action]. They cannot [win condition] without [the specific maths operation]. That's the pedagogical value.
+>
+> I could also see this working as **[alternative archetype]** — [one sentence on why it's second choice and what it would lose].
+>
+> Which direction feels right? Or do you have a different game in mind that inspired this?"
+
+#### After the concept is agreed
+
+Pin down the interaction model precisely:
+- What does the child physically touch, drag, or tap on screen?
+- What does that action *visually show* about the maths? (this is the whole point)
+- Is there a separate answer-submission step, or is the interaction itself the answer?
+- Does it snap to values? (angle snap, grid snap, fraction denominator snap)
+- Does the keypad appear at all, and if so, when?
 
 Also ask:
 
-> "Do you have any **sample questions** in mind — what does an easy question look like? A hard one? Even rough examples help me understand the intended difficulty range and question format."
+> "Do you have **sample questions** in mind — easy, medium, hard? Even rough examples pin down the difficulty range and question format."
 
 ---
 
@@ -518,7 +548,9 @@ Report back:
 - **Derive the mechanic from the learning gap** (Section 2). Always explain *why* the proposed mechanic serves the specific misconception or gap the designer described. A mechanic that doesn't directly teach the thing is a bad mechanic.
 - **Probe vague answers**: if the designer says "make it harder", ask what specifically changes.
 - **Show the template screenshots** at the very start so the designer has a concrete visual anchor.
-- **Section 2 is the most critical**: nail the primary interaction model (canvas drag vs pure keypad) before any other design decision. The mechanic must be physically visible maths.
+- **Section 2 is the most critical**: find the arcade archetype that makes the maths physically unavoidable. The test: can the child win without understanding the concept? If yes, wrong mechanic. Reference the archetype table every time.
+- **Always name a familiar game** when proposing a concept ("like Angry Birds but…", "like a treasure map where…"). Designers think in games, not abstractions.
+- **Explain the pedagogical value** of the chosen mechanic in terms of the learning gap, not the technology. "SVG cannon" is technology. "The child cannot aim without physically manipulating an angle" is pedagogy.
 - **Ask about challenge rounds** (Section C2). Both existing games have one. It adds depth; don't skip it.
 - **Curriculum matters**: capture the standard code in Section A. It goes in README, deployment, and report copy.
 - **Levels = different question types**, not just harder numbers. Each level should teach a different skill.
