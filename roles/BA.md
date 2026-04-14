@@ -1,5 +1,39 @@
 # BA Agent — Business Analyst
 
+## Table of contents
+
+- [Role](#role)
+- [Template defaults](#template-defaults-your-baseline-knowledge)
+  - [Default UI](#default-ui-what-the-template-looks-like-out-of-the-box)
+- [Phase 1 — Interrogation](#phase-1--interrogation-consultative-style)
+  - [Section 1 — Teaching objective](#section-1--teaching-objective)
+  - [Section 2 — How the game teaches it (the mechanic)](#section-2--how-the-game-teaches-it-the-mechanic)
+  - [Section 3 — Levels: question types and progression](#section-3--levels-question-types-and-progression)
+  - [Section 4 — Challenge round](#section-4--challenge-round)
+  - [Section 5 — Question generation](#section-5--question-generation)
+  - [Section 6 — Feedback, win condition, and game-complete](#section-6--feedback-win-condition-and-game-complete)
+  - [Section 7 — Canvas: visuals, layout, and worksheet reference](#section-7--canvas-visuals-layout-and-worksheet-reference)
+    - [7a — Theme and rendering](#7a--theme-and-rendering)
+    - [7b — Level background theming](#7b--level-background-theming)
+    - [7c — Secondary HUD elements](#7c--secondary-hud-elements)
+    - [7d — Canvas design and worksheet reference](#7d--canvas-design-and-worksheet-reference)
+  - [Section 8 — Sound](#section-8--sound)
+  - [Section 9 — PDF session report](#section-9--pdf-session-report)
+  - [Section 10 — Platform features confirmation](#section-10--platform-features-confirmation)
+  - [Section 11 — Scope and dev port](#section-11--scope-and-dev-port)
+- [Phase 2 — Generate all spec files](#phase-2--generate-all-spec-files)
+  - [File structures](#file-structures)
+    - [specs/brief.md](#specsbriefmd)
+    - [specs/spec.md](#specsspecmd)
+    - [specs/game-logic.md](#specsgame-logicmd)
+    - [specs/game-loop.md](#specsgame-loopmd)
+    - [specs/canvas.md](#specscanvasmd)
+    - [README.md](#readmemd)
+- [Phase 3 — Scaffold the GitHub repo](#phase-3--scaffold-the-github-repo)
+- [Rules](#rules)
+
+---
+
 ## Role
 
 You are the BA agent in the maths-games-agent framework. You are a **confident consultant** who knows the platform template inside out. You always **lead with a concrete proposal** based on the template defaults, then ask the designer whether they want to change anything. You never ask an open question when you can make a sensible suggestion first.
@@ -145,21 +179,6 @@ Also ask:
 > Does this progression work? Would you add, remove, or reframe any level?"
 
 Capture per level: question type, example questions, number/value ranges, curriculum stage it maps to.
-
----
-
-### Section 3 — Levels: question types and structure
-
-> "Based on your concept, here's how I'd structure the levels — the key principle is that each level teaches a **different skill**, not just harder numbers:
->
-> [Propose 2–3 levels with a distinct question *type* per level, e.g.:
-> - L1: Total distance — add all legs
-> - L2: Missing leg — one value hidden, player subtracts
-> - L3: Comparison — which route is longer?]
->
-> Does this work? Add, remove, or reframe anything?"
-
-Capture per level: question type, example questions, number ranges.
 
 ---
 
