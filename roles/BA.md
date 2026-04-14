@@ -69,24 +69,30 @@ These are the defaults in every game built on this platform. Propose them unless
 | Deployment | Vercel, embeddable via iframe |
 | Dev server port | Assign next available (distance=4001, angles=4002) |
 
-### Default UI (what the template looks like out of the box)
+### Default UI (what real games look like)
 
-The template ships with a reference game called **Ripple**. Its UI is the starting point for every new game. The four reference screenshots below show the full default UI — share these with the designer at the start of the conversation so they have a concrete visual baseline:
+Share these screenshots at the start of every conversation. They show the **shell UI** (fixed across all games) and two real canvases so the designer has a concrete reference.
 
-- `ripple-scene-s1.png` — https://raw.githubusercontent.com/anandamarsh/maths-game-template/main/public/screenshots/ripple-scene-s1.png
-- `ripple-scene-s2.png` — https://raw.githubusercontent.com/anandamarsh/maths-game-template/main/public/screenshots/ripple-scene-s2.png
-- `ripple-scene-s3.png` — https://raw.githubusercontent.com/anandamarsh/maths-game-template/main/public/screenshots/ripple-scene-s3.png
-- `ripple-scene-s4.png` — https://raw.githubusercontent.com/anandamarsh/maths-game-template/main/public/screenshots/ripple-scene-s4.png
+**Trail Distance Calculator** — SVG trail map, odometer HUD, dino sprite:
+- https://raw.githubusercontent.com/anandamarsh/maths-distance-calculator/main/public/screenshots/distance-scene-2026-04-02T06-53-37-426Z.png
+- https://raw.githubusercontent.com/anandamarsh/maths-distance-calculator/main/public/screenshots/distance-scene-2026-04-02T06-54-10-831Z.png
+- https://raw.githubusercontent.com/anandamarsh/maths-distance-calculator/main/public/screenshots/distance-scene-2026-04-02T06-55-05-443Z.png
+- https://raw.githubusercontent.com/anandamarsh/maths-distance-calculator/main/public/screenshots/distance-scene-2026-04-02T06-55-36-267Z.png
 
-What these show:
+**Angle Explorer** — SVG cannon, coordinate axes, live angle arc:
+- https://raw.githubusercontent.com/anandamarsh/maths-angle-explorer/main/public/screenshots/angle-explorer-scene-2026-04-12T02-39-16-608Z.png
+- https://raw.githubusercontent.com/anandamarsh/maths-angle-explorer/main/public/screenshots/angle-explorer-scene-2026-04-11T16-01-41-065Z.png
+- https://raw.githubusercontent.com/anandamarsh/maths-angle-explorer/main/public/screenshots/angle-explorer-scene-2026-03-30T13-20-23-608Z.png
+- https://raw.githubusercontent.com/anandamarsh/maths-angle-explorer/main/public/screenshots/angle-explorer-scene-2026-03-30T06-05-23-181Z.png
+
+What the shell shows (same in every game):
 - **Top bar**: mute, restart, level selector dots, capture/share button
-- **Canvas area**: full-screen animated canvas; this is what the designer customises
 - **Question box**: floating card showing the current question
 - **Numeric keypad**: collapsible, digits + backspace + sign + decimal + Submit
 - **Progress row**: egg icons (10 default) — filled = correct answers banked
 - **Social drawer**: share/comments icons on the side
 
-This is the shell. The designer defines the **canvas** and the **question format**. Everything else is inherited.
+The **canvas** is the only thing that changes. The designer defines the canvas and the question format. Everything else is inherited.
 
 ---
 
@@ -224,9 +230,15 @@ Also:
 
 #### 7a — Theme and rendering
 
-> "Here's the starting point for your game's canvas — the template default:
-> - [Scene 1](https://raw.githubusercontent.com/anandamarsh/maths-game-template/main/public/screenshots/ripple-scene-s1.png)
-> - [Scene 2](https://raw.githubusercontent.com/anandamarsh/maths-game-template/main/public/screenshots/ripple-scene-s2.png)
+> "Here are two real games built on this platform — your canvas will be something like one of these:
+>
+> **Trail Distance Calculator** (SVG trail map + odometer):
+> - [Scene 1](https://raw.githubusercontent.com/anandamarsh/maths-distance-calculator/main/public/screenshots/distance-scene-2026-04-02T06-53-37-426Z.png)
+> - [Scene 2](https://raw.githubusercontent.com/anandamarsh/maths-distance-calculator/main/public/screenshots/distance-scene-2026-04-02T06-55-05-443Z.png)
+>
+> **Angle Explorer** (SVG cannon + coordinate axes + live arc):
+> - [Scene 1](https://raw.githubusercontent.com/anandamarsh/maths-angle-explorer/main/public/screenshots/angle-explorer-scene-2026-04-12T02-39-16-608Z.png)
+> - [Scene 2](https://raw.githubusercontent.com/anandamarsh/maths-angle-explorer/main/public/screenshots/angle-explorer-scene-2026-03-30T13-20-23-608Z.png)
 >
 > For your concept I'd suggest: **[propose theme, palette, central object]**.
 >
