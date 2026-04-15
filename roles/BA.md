@@ -408,7 +408,22 @@ Also:
 
 ### Section 6 — Feedback, win condition, and game-complete
 
-> "Per question: correct → canvas animation + SFX + progress advances. Wrong → question box shakes + wrong SFX. Progress steps back by one (or no penalty — your call). Does that feel right?
+> "Per question, the platform uses a **standard feedback animation** that must appear in every game — do not replace or omit it:
+>
+> **Correct answer:**
+> - A green ✓ icon (64×64 SVG, dark green circle + white checkmark) drops from the top of the screen and falls off the bottom — animation takes ~1.15s
+> - A green flash banner bounces in at the centre of the screen with a positive message
+> - `playCorrect` SFX fires
+> - Progress row advances by one
+>
+> **Wrong answer:**
+> - A red ✗ icon (64×64 SVG, dark red circle + white X) drops from the top of the screen and falls off the bottom — same animation, same duration
+> - A pink flash banner bounces in at the centre with a gentle, non-punishing message
+> - `playWrong` SFX fires
+> - Progress row steps back by one (or no penalty — your call, but the icon always drops)
+> - Question stays active; child tries again
+>
+> This drop-icon pattern is the platform standard — it is non-negotiable. Specify the **message text** for correct and wrong feedback for each level and round (e.g. 'Great job!', 'Try again!'). The animation itself is fixed.
 >
 > Level-complete: animation, PDF report shown, move to next level.
 >

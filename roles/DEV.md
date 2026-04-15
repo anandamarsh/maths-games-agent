@@ -10,6 +10,7 @@ You are the Dev agent in the maths-games-agent framework. Your job is to build t
 
 - `specs/spec.md` — the full game specification (read this first)
 - The cloned template repo in the working directory — do not delete or restructure template scaffolding
+- Use the local clone of the template repo as reference whenever needed. The canonical template URL is `https://github.com/anandamarsh/maths-game-template`.
 
 ---
 
@@ -181,6 +182,94 @@ Write at least one unit test per round per level. Tests must:
 
 ---
 
+## Answer feedback animation (mandatory — every game)
+
+Every game must implement the standard drop-icon feedback animation. This is a platform-wide pattern — do not invent an alternative.
+
+### How it works
+
+When the child submits an answer, a 64×64 SVG icon drops from the top of the screen and falls off the bottom. Simultaneously, a flash text banner bounces in at the centre of the screen.
+
+- **Correct:** green circle + white ✓, green flash banner
+- **Wrong:** red circle + white ✗, pink flash banner
+
+### CSS keyframes (add to `src/index.css`)
+
+```css
+@keyframes icon-drop-left {
+  0%   { transform: translateY(-96px) scale(0.96); opacity: 0; }
+  10%  { transform: translateY(0px) scale(1); opacity: 1; }
+  85%  { transform: translateY(78vh) scale(1); opacity: 1; }
+  100% { transform: translateY(95vh) scale(1); opacity: 0; }
+}
+@keyframes bounce-in {
+  0%   { transform: scale(0.3); opacity: 0; }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-bounce-in { animation: bounce-in 0.4s cubic-bezier(0.36,0.07,0.19,0.97); }
+```
+
+### Drop icon (render via `createPortal` to `document.body`)
+
+```tsx
+{flash && createPortal(
+  <div className="pointer-events-none fixed z-[9999]" style={{ left: "16px", top: "16px" }}>
+    {flash.ok ? (
+      <svg viewBox="0 0 120 120" width="64" height="64" style={{
+        display: "block",
+        animation: "icon-drop-left 1.15s cubic-bezier(0.22,0.72,0.2,1) forwards",
+        filter: "drop-shadow(0 0 12px #4ade80) drop-shadow(0 0 24px #16a34a)",
+      }}>
+        <circle cx="60" cy="60" r="54" fill="#14532d" />
+        <path d="M30 62 L50 82 L90 38" fill="none" stroke="#ffffff"
+          strokeWidth="13" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ) : (
+      <svg viewBox="0 0 120 120" width="64" height="64" style={{
+        display: "block",
+        animation: "icon-drop-left 1.15s cubic-bezier(0.22,0.72,0.2,1) forwards",
+        filter: "drop-shadow(0 0 12px #f87171) drop-shadow(0 0 24px #b91c1c)",
+      }}>
+        <circle cx="60" cy="60" r="54" fill="#7f1d1d" />
+        <path d="M38 38 L82 82 M82 38 L38 82" fill="none" stroke="#ffffff"
+          strokeWidth="13" strokeLinecap="round" />
+      </svg>
+    )}
+  </div>,
+  document.body
+)}
+```
+
+### Flash text banner
+
+```tsx
+{flash && (
+  <div className={`pointer-events-none absolute left-1/2 top-[30%] z-40 -translate-x-1/2
+    rounded-xl border-2 px-8 py-4 text-2xl font-black uppercase tracking-widest animate-bounce-in
+    ${flash.ok
+      ? "border-emerald-400 bg-emerald-950/90 text-emerald-300"
+      : "border-pink-400 bg-pink-950/90 text-pink-300"}`}>
+    {flash.text}
+  </div>
+)}
+```
+
+### State
+
+```tsx
+const [flash, setFlash] = useState<{ ok: boolean; text: string } | null>(null);
+
+function showFeedback(ok: boolean, text: string) {
+  setFlash({ ok, text });
+  setTimeout(() => setFlash(null), 1200); // clear after animation completes
+}
+```
+
+Use the message text from `specs/spec.md` for correct/wrong messages per level and round. Play `playCorrect()` or `playWrong()` alongside the animation.
+
+---
+
 ## Responsiveness rules
 
 All games must work on both mobile and desktop. Follow these rules:
@@ -192,6 +281,27 @@ All games must work on both mobile and desktop. Follow these rules:
 - Test at: 375×667 (iPhone SE), 768×1024 (iPad), 1280×800 (desktop).
 - Portrait orientation is primary for mobile; landscape must not break the game.
 - Font sizes: minimum `1rem` body text, `1.5rem` for questions, `2rem` for answers/inputs.
+
+---
+
+## Template features that must remain visible
+
+These are not optional unless the user explicitly asks to remove them.
+
+- The calculator keypad is a **must** in every phase, including heavily guided rounds. If the round does not require typed input yet, keep the keypad visible and use it as a passive display / scaffold rather than hiding it.
+- Keep the full dev toolbar / template feature surface present, not a reduced subset. This includes the standard top-bar controls and the developer/demo controls exposed by `GameLayout`.
+- Before inventing a custom replacement, first wire the existing template capabilities:
+  - restart
+  - mute
+  - language switcher
+  - screenshot capture
+  - square snip mode
+  - demo video recording
+  - autopilot / "show solve"
+  - level buttons
+  - progress indicators
+  - share / comments / video CTA if present in the template
+- If a feature is not yet functional for the current phase, stub it only temporarily and note that explicitly in your checkpoint. Do not silently omit the control.
 
 ---
 
@@ -282,6 +392,25 @@ npm run test:unit      # all unit tests must pass
 ```
 
 Do not hand off with TypeScript errors or failing unit tests. Fix them first.
+
+---
+
+## Pre-checkpoint demo checklist
+
+Before you ask the user for visual inspection at the end of any phase, you must run this checklist yourself:
+
+1. Confirm the phase scope is correct — only the intended level/round is being shown as complete.
+2. Run `npm run build` and confirm it passes with zero errors.
+3. Run `npm run test:unit` and confirm all tests pass.
+4. Start the app locally on `http://localhost:4005`.
+5. Open the running app and verify the page actually loads.
+6. Check browser console: zero red errors.
+7. Confirm the calculator keypad is visible.
+8. Confirm the full expected toolbar/dev controls are visible for that phase.
+9. Exercise the core interaction of the phase end to end yourself.
+10. Verify the checkpoint content is inspectable without hidden setup steps.
+
+Do not ask the user to inspect a phase until all ten checks above are complete.
 
 ---
 
