@@ -65,7 +65,7 @@ These are the defaults in every game built on this platform. Propose them unless
 |--------|-----------------|
 | Questions per round | 10 |
 | Correct answer | +1 progress unit (egg/coin/star — theme-dependent) |
-| Wrong answer | −1 progress unit |
+| Wrong answer | −1 progress unit (max 1 loss per question — see rule below) |
 | Levels | 2 (but 3 is common for richer curricula — propose based on concept) |
 | Primary interaction | Type answer on numeric keypad + Submit |
 | Answer format | Numeric (integer or decimal) |
@@ -108,6 +108,24 @@ What the shell shows (same in every game):
 - **Social drawer**: share/comments icons on the side
 
 The **canvas** is the only thing that changes. The designer defines the canvas and the question format. Everything else is inherited.
+
+---
+
+### Fundamental scoring rule (non-negotiable — applies to every game)
+
+> **A child can never lose more than 1 point per question, no matter how many times they try or whether they use the phantom.**
+
+The exact behaviour:
+
+1. Child answers correctly → +1 point, advance to next question
+2. Child answers wrongly → −1 point, question stays active, try again free
+3. Child answers wrongly again (and again) → no further deduction, question stays active
+4. Child invokes phantom (autopilot solves via ghost clicks/drags) → if not yet deducted, −1; if already deducted, no further loss. Question resolves correctly and advances.
+5. **The question never advances until it is answered correctly** — by the child or by phantom
+
+This rule exists because the goal is mastery, not punishment. The child must eventually get every question right. The −1 is a signal, not a barrier.
+
+This rule must be implemented in the template repo and respected by every game built on this platform.
 
 ---
 
