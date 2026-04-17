@@ -11,6 +11,22 @@ You are the Dev agent in the maths-games-agent framework. Your job is to build t
 - `specs/spec.md` — the full game specification (read this first)
 - The cloned template repo in the working directory — do not delete or restructure template scaffolding
 - Use the local clone of the template repo as reference whenever needed. The canonical template URL is `https://github.com/anandamarsh/maths-game-template`.
+- There may also be a local clone of the template repo available on disk. Prefer reading and diffing that local copy whenever you need to inspect sample implementations or exact UI behaviour.
+
+---
+
+## Critical delivery rule
+
+Do not treat a game as "done enough" when the maths logic works but the interaction semantics, visual scaffolding, and template behaviors are only approximately correct.
+
+In practice, most avoidable back-and-forth happens when the Dev agent:
+
+- implements a new round as a near-copy of another round without preserving the intended scaffolding differences
+- gets the maths right but the timing, overlay, animation, or autopilot behavior wrong
+- makes layout changes that are "close enough" instead of pixel-correct to the requested structure
+- changes generator ranges without encoding the final constraints explicitly in tests
+
+If the spec or user corrections establish a round-specific interaction contract, that contract is mandatory and must be implemented directly, not inferred loosely.
 
 ---
 
@@ -29,6 +45,465 @@ Only read further files (components, hooks, i18n, etc.) as you need them.
 
 > **Never read `src/assets/fonts/` — it contains a 23 MB binary font file.**
 > **Never read `package-lock.json` — it is auto-generated and not useful.**
+
+---
+
+## Mandatory template parity before game-specific polish
+
+Before you start customising the game deeply, first ensure the template-level features are present and working in the game you are building.
+
+These are not optional:
+
+- Calculator keypad is mandatory.
+- All dev toolbar features from the template must be present unless the spec explicitly removes them.
+- Keyboard input must be mapped to the on-screen keypad.
+- Screenshot capture must work.
+- Square snip capture must work.
+- Demo recording / demo-mode controls must work if the template supports them.
+- Autopilot / robot solve mode must work if the template supports it.
+
+Do not assume that because a few icons are visible, the feature set is complete. Verify behaviour, not only presence.
+
+---
+
+## Update specs while implementing
+
+If the user iteratively clarifies behaviour, layout, visuals, automation, scoring, or wording while development is ongoing:
+
+- Update `specs/spec.md` to reflect the accepted behaviour.
+- Do not keep “tribal knowledge” only in chat.
+- Treat repeated user corrections as evidence that the spec was underspecified.
+
+This is especially important for:
+
+- drag/drop semantics
+- calculator behaviour
+- autopilot/demo behaviour
+- answer reveal behaviour
+- screenshot/snipping behaviour
+- exact layout geometry
+- visual theme and background rules
+
+---
+
+## Pre-checkpoint demo checklist
+
+Before asking the user to visually inspect a checkpoint, manually verify all of the following:
+
+- The top toolbar matches template behaviour and all expected icons/features are present.
+- The game canvas background is full-bleed behind the top strip and does not stop early because of hidden margins, padding, or wrapper backgrounds.
+- The layout matches the spec exactly:
+  left/right gaps, box spacing, bottom dock height, calculator touching the bottom edge, message box height, and divider line positions.
+- The calculator keypad is fully visible when expanded.
+- The question/message box and calculator have the correct relative heights in both expanded and collapsed states.
+- No unintended instructional text appears outside the allowed text area.
+- Counters update correctly on source and destination regions.
+- Drag/drop works visually and mathematically.
+- Robot/autopilot visually demonstrates the same logic the user would perform; it must not fake correctness with a different algorithm.
+- Screenshot and square snip both save the expected region and do not throw console errors.
+- Theme colours and background art match the current item/theme and also propagate into the message box and calculator chrome.
+
+Do not ask for visual inspection before this checklist is green.
+
+---
+
+## High-friction failure patterns from Level 1 basic round
+
+These caused excessive back-and-forth and must be proactively avoided.
+
+### 1. Hidden layout wrappers create visual drift
+
+Common cause:
+
+- `mx-*`, `px-*`, `pb-*`, rounded wrappers, or hardcoded dark backgrounds in `GameLayout` or the screen root create gutters and separator bands the user never asked for.
+
+Prevent it by:
+
+- auditing all parent wrappers, not only the visible child component
+- checking full-bleed behaviour behind the top strip, canvas, and message box
+- verifying calculator bottom alignment against the viewport, not only against its own wrapper
+
+### 2. Styling the wrong layer does nothing
+
+Common cause:
+
+- changing `QuestionBox` or shared chrome while the actual game uses a custom `questionPanel` with its own hardcoded colours
+
+Prevent it by:
+
+- tracing the final rendered path before editing visuals
+- checking whether the active screen overrides shared components
+- changing the real render source, not only the reusable component
+
+### 3. Screenshot capture breaks because the capture path differs from the live path
+
+Common cause:
+
+- html2canvas fails on `oklch(...)` / `oklab(...)`
+- snip overlays or dev chrome are accidentally included in the capture region
+- captured area differs from the dotted/snipped selection
+
+Prevent it by:
+
+- sanitising unsupported CSS colour functions before capture
+- rendering capture content from the exact scene subtree
+- keeping capture overlays outside the captured subtree
+- matching template capture behaviour rather than inventing a new one
+
+### 4. Autopilot looked fake because the hand moved but items teleported
+
+Common cause:
+
+- phantom hand movement was animated, but the dragged items were assigned directly instead of travelling with the hand
+
+Required resolution:
+
+- autopilot must drive the same drag overlay / drag state a human drag uses
+- grouped drags must visibly travel left-to-right before drop
+- demo speed must be slow enough for the eye to follow
+
+### 5. Calculator banner / extra UI can silently break dock geometry
+
+Common cause:
+
+- adding an answer banner above the calculator without increasing or rebalancing dock height clips the keypad or makes the left/right panels mismatched
+
+Prevent it by:
+
+- validating dock heights in:
+  - dev mode
+  - demo mode
+  - production mode
+  - collapsed state
+  - expanded state
+
+### 6. Equal-distribution drag semantics must be implemented as a system, not piecemeal
+
+Common failure modes:
+
+- dragging one item instead of a linked group
+- linked buddies highlighted incorrectly
+- lower boxes interactive when they should be read-only
+- source items reflow after drag when spacing should remain stable
+- items snap or resize incorrectly after drop
+
+Prevent it by:
+
+- defining the drag contract upfront from the spec
+- implementing source state, drag overlay state, drop state, and return animation state coherently
+
+### 7. Theme work is incomplete if it only changes one widget
+
+Common cause:
+
+- only changing calculator text colour while leaving message box backgrounds, highlights, banner, and canvas separators in the old theme
+- only changing the calculator shell/border while the internal keypad buttons keep hardcoded default fills
+
+Prevent it by:
+
+- treating theme as a coordinated chrome system:
+  - canvas backdrop
+  - message header background
+  - answer area background
+  - calculator shell
+  - calculator display
+  - calculator digit keys
+  - calculator operator keys
+  - answer banner
+  - text highlight colours
+- tracing theme props all the way to the final rendered leaf nodes; do not assume the outer panel theme automatically reaches nested buttons
+
+Resolution pattern from Pack It:
+
+- when the user says the keypad should follow the cotheme "the way the border does", they mean the key surfaces themselves must inherit the active theme, not just the surrounding panel border
+- if keypad keys still use hardcoded slate backgrounds while the border changes colour, the task is not complete
+- fix this by introducing explicit per-key theme tokens or by deriving key fills/borders from the active keypad theme, then verify every item theme variant
+
+### 8. Organic scenes must avoid distracting geometric/straight-line motifs unless the theme truly needs them
+
+Examples:
+
+- poultry/farm backdrops should not read like barn planks unless explicitly desired
+- cookie/cupcake worlds should not look like generic striped panels or abstract bars
+
+Prefer illustrated silhouettes, rounded terrain, clustered props, and soft forms.
+
+### 9. Question variety and answer exposition need explicit template rules
+
+Required:
+
+- multiple question templates
+- no immediate consecutive repetition of the same template
+- division keywords highlighted
+- answer lines written as natural sentences
+- sequential reveal behaviour specified precisely
+
+### 10. Pack It L1 basic interaction polish must be specified as behaviour, not treated as styling cleanup
+
+This thread showed that many "small" issues were actually contract failures because they changed how the round felt or validated.
+
+Common failure modes:
+
+- keyword, number, and mathematical symbol colours inherited theme colours instead of staying on fixed semantic colours
+- the inline `Next` button and calculator keys did not visually read as clickable controls
+- refresh/reset behaved like a full round restart when the intended behaviour was "return items to source, keep question text, reset calculator"
+- dropped groups were mathematically correct but not rendered as visible right-edge columns across the destination boxes
+- the selected halo was moved without moving the selected item, so the perceived misalignment remained
+- drag hover over the active destination did not snap magnetically into place
+- generator bounds stayed on the earlier small-number range even after grouped dragging made larger values acceptable
+
+Required resolution:
+
+- define semantic colours independently from theme chrome where the spec/user does so
+- treat button affordance as functional behaviour: contrast, hover, cursor, focus, Enter mapping
+- distinguish "toolbar refresh", "retry this question", and "full restart" explicitly in code
+- preserve visual grouping semantics after drop, not only counts
+- when fixing alignment bugs, change the rendered item layer that the eye reads, not only background/halo layers
+- update generator constraints and tests in the same change when interaction capacity changes
+
+### 11. Pack It L1 basic autopilot submit/CTA timing is a known high-risk area
+
+This thread required repeated correction because the autopilot looked nearly correct while still being wrong in visible ways.
+
+Common failure modes:
+
+- drag-step sound fired before motion instead of during motion
+- phantom hand targeted the wrong DOM subtree and therefore never appeared on the calculator tick
+- calculator tick stayed disabled during automation, so the required visible submit action was impossible
+- validation used stale render state after staged drop animation and produced a wrong answer despite a correct board
+- the phantom hand jumped to the submit/Next CTA too late, disappeared too quickly, or triggered result state before the visible click completed
+- Enter key continued to map to keypad submit instead of the visible inline CTA once `Next` appeared
+
+Required resolution:
+
+- query the real DOM target for the phantom hand, not only the scene root
+- keep the calculator expanded during robot demo when the demo must press the tick
+- validate from authoritative current state after animations settle
+- sequence autopilot as: final drag settles → hand appears on tick → dwell → click with sound → validate → reveal
+- sequence `Next` as an explicit visible CTA flow with exact requested dwell/click/wait timings
+- whenever a visible CTA is present, keyboard Enter must activate that CTA and not fall through elsewhere
+
+### 10. Group formation before drag must be animated, visible, and anchored
+
+Common failure modes:
+
+- selecting one source item instantly teleports buddies into a grouped drag state
+- selected buddies briefly disappear while the dark pill/halo appears
+- the clicked item shifts a few pixels when the group forms instead of staying pinned
+- grouped preview looks different in manual drag and autopilot drag
+- grouped preview is rendered as separate circles instead of a single fused bundle
+
+Required resolution:
+
+- when one source item is selected, that touched item must stay fixed in place
+- the other linked source items must visibly animate into their grouped positions beside it
+- the grouped state must use one shared pill background and one shared halo, not independent per-item halos
+- the item glyphs inside the grouped bundle must remain visible throughout the regrouping animation
+- manual drag and autopilot drag must use the same grouped visual language and anchoring rules
+
+### 11. Autopilot hand lifecycle must match a human demonstration exactly
+
+Common failure modes:
+
+- hand appears in a generic position rather than on a real source item
+- hand snaps back to the left after drop instead of disappearing and reappearing later
+- hand remains visible on the right after the drop
+- hand reappears too early, before redistribution/fall animations have settled
+- autopilot advances to the next question invisibly instead of visibly clicking the Next button
+
+Required resolution:
+
+- hand must press on a real source item on the left
+- grouped items must form first, then drag with the hand
+- after reaching the drop point, hand must pause briefly, then release
+- once dropped, the hand must disappear on the right immediately
+- the hand must stay hidden until post-drop settling is complete, then wait the configured extra delay before appearing on the next left-side pickup
+- after the last drop, the hand must remain hidden until the visible Next button appears, then move to and click that button
+
+### 12. Drop targeting must respect the actual insertion slot, not a generic container center
+
+Common failure modes:
+
+- autopilot drops into the center of the top box rather than after the current rightmost top-row item
+- the leftmost dropped item shifts after release because the drag target and final resting slot do not align
+- the whole dropped group slides after release instead of only the trailing items redistributing downward
+
+Required resolution:
+
+- compute the drop target from the live top-row occupancy
+- target the lead dropped item at the slot immediately after the current rightmost top-row item
+- fine-tune the target so the lead dropped item is already aligned with its final resting position at release
+- after drop, the lead dropped item should stay put while only the trailing items animate into their final lower-box destinations
+
+### 13. Selection state must be cleared only after post-drop settling is complete
+
+Common failure modes:
+
+- one item remains selected/haloed in the right-side boxes after the drop animation finishes
+- deselection happens too early and breaks the visual continuity of the drop
+
+Required resolution:
+
+- keep selection visible through drag and drop
+- clear all selection state only after the item fall/redistribution animation has fully completed
+- explicitly verify that no halo remains in any destination box after settling
+
+### 14. Autopilot mode must hide answer reveals and other helper UI unless explicitly required
+
+Common failure modes:
+
+- answer banner remains visible during autopilot, making the solve look fake or trivially assisted
+- debug/dev answer affordances leak into demo mode
+
+Required resolution:
+
+- if autopilot/demo is active, hide answer banners unless the spec explicitly requires them
+- verify answer visibility separately for:
+  - manual mode
+  - single-question autopilot
+  - continuous autopilot
+
+---
+
+## Behaviour rules the dev agent must verify explicitly
+
+If the game includes these features, verify them deliberately instead of assuming they “probably work”:
+
+- `197879` reveals the answer without corrupting calculator state
+- `198081` starts full automation/demo correctly and resets the calculator display appropriately
+- demo mode star/progress behaviour differs correctly from normal mode if the spec says so
+- submit/tick activation depends on the intended state, not accidental overfill or partial fill heuristics
+- overfilling a box changes its border state only; it must not auto-submit unless the spec says so
+- question progression happens only through the intended CTA path
+
+---
+
+## When using the template as reference
+
+If the user says “make it behave like the template” or “see how the template does it”, do not approximate.
+
+You must:
+
+- inspect the local template implementation
+- identify the exact component / hook / CSS path responsible
+- mirror the same behaviour structure where appropriate
+
+This applies especially to:
+
+- calculator collapse behaviour
+- screenshot/snip behaviour
+- flash/capture effects
+- answer feedback drop icons
+- autopilot motion
+
+---
+
+## Round differentiation guardrail
+
+When a level has multiple rounds with similar maths but different scaffolding, you must explicitly write down the round-difference matrix before coding. At minimum, identify for each round:
+
+- how the child inputs an answer
+- whether the board responds live while typing
+- whether animation happens before or after submit
+- whether correctness is revealed immediately or only after submit
+- what autopilot/robot demo must physically do
+- what UI guidance/support is shown or hidden
+
+Do not collapse these rounds into one shared implementation until you can prove the round-difference matrix is preserved.
+
+### Example: L1 Pack It failure pattern
+
+The following distinctions were repeatedly lost and had to be restored by manual correction:
+
+- `Load` is the drag round. The robot demo must drag item groups.
+- `Pack` is not the drag round. The robot/phantom hand must use keypad/button interaction only.
+- `Pack` should allow number entry first, then let the item animation settle, then press tick to verify.
+- `Ship` should not respond live while entering. It should verify only after tick.
+- `Ship` should wait briefly after its movement animation settles before showing right/wrong.
+
+If two rounds are meant to feel different, do not ship them with only a label change.
+
+---
+
+## Template behavior preservation
+
+If the template already has a platform-standard behavior, preserve it unless the spec explicitly replaces it.
+
+Important examples:
+
+- Completion state should use the template-style fullscreen completion splash, not an improvised inline message panel.
+- Shared button styles should reuse template/button primitives when matching existing controls.
+- Autopilot/phantom-hand flows should use the same visible interaction language as the template: move to control, click control, then allow state changes.
+
+Do not replace a fullscreen modal/overlay with an inline status message unless the spec explicitly says to.
+
+---
+
+## Layout exactness rule
+
+When the user is iterating on layout, treat requests like:
+
+- "top of screen"
+- "centered"
+- "no gap"
+- "1rem inset"
+- "same look and feel"
+
+as exact constraints, not approximate styling intent.
+
+When changing layout:
+
+- remove hidden parent offsets and padding if they prevent true placement
+- align divider position and column widths together
+- verify both left and right insets after divider changes
+- remove obsolete hover/highlight states if the user says they should never appear
+
+A visually "almost right" implementation is not complete.
+
+---
+
+## Generator constraints rule
+
+When the user tightens generator constraints during review, encode the final constraints directly in the calculator layer and tests.
+
+Do not leave the old range logic in place after the UI appears acceptable.
+
+Typical examples from Pack It L1:
+
+- larger values for later rounds than the first round
+- dividends must be two digits
+- divisors must be above a specific threshold
+
+If a constraint changes during feedback, the unit tests must be updated in the same change.
+
+---
+
+## Autopilot implementation guardrail
+
+Autopilot bugs caused a large amount of avoidable iteration. For keypad-driven rounds:
+
+- do not let keypad autopilot fall through to drag-demo logic
+- reset the visible keypad display deterministically before typing
+- avoid double-entry paths; do not both mutate state and trigger DOM button clicks for the same digit
+- ensure `Next` timing after submit is intentional and matches the requested pause
+- ensure Enter key behavior matches button-click behavior on completion overlays
+
+For each round, confirm that the phantom hand uses the same input modality the child is supposed to use.
+
+---
+
+## Before calling the round done
+
+For any level/round implementation, verify all of the following explicitly:
+
+1. The generator ranges match the final requested maths constraints.
+2. Each round’s interaction differs exactly where intended.
+3. Completion UI matches the template/platform pattern.
+4. Autopilot uses the correct modality and timing.
+5. Layout constraints are exact, not approximate.
+6. Visual states do not include leftover hover/correct/full styling the user asked to remove.
+7. The relevant unit tests and Playwright tests cover those behaviors.
+8. Refresh/reset, submit-tick, answer reveal, CTA timing, and Enter-key mappings all match the final reviewed interaction sequence exactly.
 
 ---
 

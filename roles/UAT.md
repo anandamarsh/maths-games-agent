@@ -33,6 +33,11 @@ A UAT decision: **APPROVED** or **REJECTED**, with written rationale.
 - [ ] Is the UI clear and age-appropriate?
 - [ ] Is feedback encouraging and constructive?
 - [ ] Does it work on mobile?
+- [ ] Do themed UI variants apply consistently across the full interaction chrome, not only outer borders or headers?
+
+### Visual consistency traps to check deliberately
+- [ ] If a cotheme/item theme changes the calculator or message area, do the internal keypad keys also change, or is only the border themed?
+- [ ] Are there any hardcoded default fills left inside a themed component that make the theme look only partially applied?
 
 ---
 
